@@ -1,4 +1,4 @@
-react-stack-nav
+React Stack Nav
 ==========
 Simple navigation for React
 

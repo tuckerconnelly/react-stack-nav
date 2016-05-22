@@ -22,6 +22,7 @@
     "no-param-reassign": 0,
     "func-names": 0,
     "consistent-return": 0,
+    "no-underscore-dangle": 0,
     "import/no-unresolved": 0,
 
     "react/jsx-closing-bracket-location": [1, "after-props"],
