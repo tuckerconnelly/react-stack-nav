@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import invariant from 'invariant'
 
-export default (component) => {
+export default component => {
   let ComposedComponent = component
 
   // Handle stateless components
@@ -21,26 +21,40 @@ export default (component) => {
         'Make sure you have a redux <Provider> at the top ' +
         'of your app.')
 
-      invariant(context.store.navigation,
+      invariant(context.store.getState().navigation,
         'Couldn\'t find the navigation reducer on the store. ' +
-        'Make sure you have react-stack-navigation\'s reducer on ' +
+        'Make sure you have react-stack-nav\'s reducer on ' +
         'your root reducer.'
       )
+
+      this.updateFromStore()
     }
 
     getChildContext() {
-      return { navStack: this.navStack.slice(0, this.navStack.length - 1) }
+      return { navigationStack: this.navigationStack.slice(1, this.navigationStack.length) }
     }
 
-    // Default to redux store for stack if this is the first
-    // route and the navStack hasn't been set yet
-    navStack = this.context.navStack || this.store.navigation
+    componentDidMount() {
+      // Reset navigation stack when store changes
+      this.context.store.subscribe(() => this.updateFromStore(true))
+    }
+
+    updateFromStore(forceUpdate) {
+      const state = this.context.store.getState()
+      this.index = state.navigation.index
+      // Default to redux store for stack if this is the first
+      // route and the navStack hasn't been set yet
+      this.navigationStack =
+        this.context.navigationStack || state.navigation.history[this.index]
+
+      forceUpdate && this.forceUpdate()
+    }
 
     render() {
       return (
         <ComposedComponent
           {...this.props}
-          routeFragment={this.navStack[this.navStack.length - 1]} />
+          routeFragment={this.navigationStack[0]} />
       )
     }
   }
@@ -50,12 +64,13 @@ export default (component) => {
 
   Route.contextTypes = {
     ...Route.contextTypes,
-    store: PropTypes.object.isRequired,
+    store: PropTypes.object,
+    navigationStack: PropTypes.array,
   }
 
   Route.childContextTypes = {
     ...Route.childContextTypes,
-    navStack: PropTypes.array,
+    navigationStack: PropTypes.array,
   }
 
   return Route
