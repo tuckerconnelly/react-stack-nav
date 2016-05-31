@@ -60,7 +60,7 @@ export default component => {
   }
 
   Route.displayName =
-    `Route(${Component.displayName || Component.name || 'Component'})`
+    `Orchestrator(${Component.displayName || Component.name || 'Component'})`
 
   Route.contextTypes = {
     ...Route.contextTypes,
