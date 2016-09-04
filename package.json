@@ -1,6 +1,6 @@
 {
   "name": "react-stack-nav",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Simple navigation for React.",
   "main": "lib/index.js",
   "scripts": {
