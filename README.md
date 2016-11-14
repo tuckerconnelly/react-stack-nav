@@ -1,12 +1,16 @@
 React Stack Nav
 ==========
-Simple navigation for React
+Dead-simple navigation for React Native and React
+
+## Installation
+
+```
+npm -S i tuckerconnelly/react-stack-nav
+```
 
 ## Usage
 
-server.js
-```
-```
+Coming soon :P
 
 ## License
 MIT
