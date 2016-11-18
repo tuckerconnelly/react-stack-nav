@@ -1,6 +1,13 @@
 import React, { Component, PropTypes } from 'react'
 import invariant from 'invariant'
 
+function makeStackFromPathname(pathname) {
+  const pathArray = pathname.split('/')
+  pathArray.shift() // Remove first blank ""
+  if (pathArray[pathArray.length - 1]) pathArray.pop() // Remove trailing "/"
+  return pathArray
+}
+
 export default component => {
   let ComposedComponent = component
 
@@ -45,7 +52,8 @@ export default component => {
       // Default to redux store for stack if this is the first
       // route and the navStack hasn't been set yet
       this.navigationStack =
-        this.context.navigationStack || state.navigation.history[this.index]
+        this.context.navigationStack ||
+        makeStackFromPathname(state.navigation.history[this.index].url)
 
       forceUpdate && this.forceUpdate()
     }

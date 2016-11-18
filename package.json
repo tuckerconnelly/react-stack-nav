@@ -37,8 +37,8 @@
     "eslint-plugin-react": "^6.2.0"
   },
   "peerDependencies": {
-    "react": "",
-    "redux": ""
+    "react": ">=15.3.2",
+    "redux": ">=3.0.0"
   },
   "dependencies": {}
 }

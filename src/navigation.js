@@ -1,82 +1,81 @@
-// HACK global.__BUNDLE_START_TIME__ is only present in
-// React Native
+// HACK global.__BUNDLE_START_TIME__ is only present in React Native
 const __WEB__ = !global.__BUNDLE_START_TIME__ && window.location.pathname
 
-export { default as createOrchestrator } from './createOrchestrator'
+export const pushState = (stateObj, title, url) => ({
+  type: 'HISTORY_PUSH_STATE',
+  payload: { stateObj: stateObj || {}, title, url },
+})
+export const replaceState = (stateObj, title, url) => ({
+  type: 'HISTORY_REPLACE_STATE',
+  payload: { stateObj: stateObj || {}, title, url },
+})
+export const back = reduxOnly => ({
+  type: 'HISTORY_BACK',
+  payload: { reduxOnly },
+})
+export const forward = reduxOnly => ({
+  type: 'HISTORY_FORWARD',
+  payload: { reduxOnly },
+})
 
-export const push = fragment => ({ type: 'NAV_PUSH', fragment })
-export const pop = () => ({ type: 'NAV_POP' })
-export const replace = fragment => ({ type: 'NAV_REPLACE', fragment })
-export const reset = stack => ({ type: 'NAV_RESET', stack })
-export const back = reduxOnly => ({ type: 'NAV_BACK', reduxOnly })
-export const forward = reduxOnly => ({ type: 'NAV_FORWARD', reduxOnly })
-
-export const attachHistoryModifiers = ({ getState, dispatch }, { BackAndroid }) => {
-  if (__WEB__) {
-    window.onpopstate = ({ state }) => {
-      const newIndex = (state && state.index) || 0
-      const lastIndex = getState().navigation.index
-      if (newIndex <= lastIndex) dispatch(back(true))
-      if (newIndex > lastIndex) dispatch(forward(true))
-    }
-  }
-  if (BackAndroid) {
-    BackAndroid.addEventListener('hardwareBackPress', () => {
-      const { index } = getState().navigation
-      if (index === 0) return false
-      dispatch(back())
-      return true
-    })
-  }
+const initialState = {
+  index: 0,
+  history: [{ stateObj: { index: 0 }, title: null, url: '/' }],
 }
 
-function makeStackFromPathname(pathname) {
-  const pathArray = pathname.split('/')
-  pathArray.shift()
-  pathArray[pathArray.length - 1] === '' && pathArray.pop()
-  return pathArray
+if (__WEB__) {
+  initialState.history[0].url = location.pathname
+  history.replaceState(
+    initialState.history[0].stateObj,
+    initialState.history[0].title,
+    initialState.history[0].url
+  )
 }
-
-const initialState = { history: [[]], index: 0 }
-if (__WEB__) initialState.history[0] = makeStackFromPathname(location.pathname)
 
 export default (state = initialState, action) => {
-  const stack = state.history[state.index]
-  let nextStack
   switch (action.type) {
-    case 'NAV_PUSH': nextStack = [...stack, action.fragment]; break
-    case 'NAV_POP': nextStack = stack.slice(0, stack.length - 1); break
-    case 'NAV_REPLACE': nextStack = state.splice(stack.length - 1, 1, action.fragment); break
-    case 'NAV_RESET': nextStack = action.stack || []; break
+    case 'HISTORY_PUSH_STATE': {
+      const { stateObj, title, url } = action.payload
 
-    case 'NAV_BACK':
-      // If action.stateOnly is set, don't call history.back()
-      if (__WEB__ && !action.reduxOnly) history.back()
-      // If we're at index 0 and there's still pushstate history in the browser
-      if (__WEB__ && state.index === 0) {
-        const newHistory = [...state.history]
-        newHistory.splice(0, 0, makeStackFromPathname(location.pathname))
-        return { index: 0, history: newHistory }
+      if (url === state.history[state.history.length - 1].url) return state
+
+      const stateObjWithIndex = { ...stateObj, index: state.index + 1 }
+
+      if (__WEB__) history.pushState(stateObjWithIndex, title, url)
+      return {
+        index: state.index + 1,
+        history: state.history
+          .slice(0, state.index + 1)
+          .concat([{ stateObj: stateObjWithIndex, title, url }]),
       }
+    }
+    case 'HISTORY_REPLACE_STATE': {
+      const { stateObj, title, url } = action.payload
+
+      if (url === state.history[state.history.length - 1].url) return state
+
+      const stateObjWithIndex = { ...stateObj, index: state.index }
+
+      if (__WEB__) history.replaceState(stateObj, title, url)
+      return {
+        index: state.index,
+        history: state.history
+          .slice(0, state.index)
+          .concat([{ stateObj: stateObjWithIndex, title, url }]),
+      }
+    }
+    case 'HISTORY_BACK':
       if (state.index === 0) return state
+
+      if (__WEB__ && !action.payload.reduxOnly) history.back()
       return { ...state, index: state.index - 1 }
-    case 'NAV_FORWARD':
-      if (__WEB__ && !action.reduxOnly) history.forward()
-      // If we're at the last index and there's still pushstate history in the browser
-      if (__WEB__ && state.index === state.history.length - 1) {
-        const newHistory = state.history.concat([makeStackFromPathname(location.pathname)])
-        return { index: state.index + 1, history: newHistory }
-      }
+
+    case 'HISTORY_FORWARD':
       if (state.index === state.history.length - 1) return state
+
+      if (__WEB__ && !action.payload.reduxOnly) history.forward()
       return { ...state, index: state.index + 1 }
+
     default: return state
   }
-
-  const nextState = {
-    index: state.index + 1,
-    history: state.history.slice(0, state.index + 1).concat([nextStack]),
-  }
-
-  __WEB__ && history.pushState(nextState, null, nextStack.join('/'))
-  return nextState
 }
