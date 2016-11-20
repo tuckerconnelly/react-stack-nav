@@ -24,6 +24,11 @@ export const forward = reduxOnly => ({
   payload: { reduxOnly },
 })
 
+export const go = numberOfEntries => ({
+  type: 'HISTORY_GO',
+  payload: { numberOfEntries },
+})
+
 const initialState = {
   index: 0,
   history: [{ stateObj: { index: 0 }, title: '', url: '' }],
@@ -81,6 +86,16 @@ export default (state = initialState, action) => {
 
       if (__WEB__ && !action.payload.reduxOnly) history.forward()
       return { ...state, index: state.index + 1 }
+
+    case 'HISTORY_GO': {
+      const targetIndex = state.index + action.payload.numberOfEntries
+
+      if (!state.history[targetIndex]) {
+        console.warn('Tried to `go()` to a non-existant index!') // eslint-disable-line no-console, max-len
+        return state
+      }
+      return { ...state, index: targetIndex }
+    }
 
     default: return state
   }
