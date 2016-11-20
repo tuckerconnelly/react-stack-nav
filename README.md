@@ -1,17 +1,57 @@
-React Stack Nav
+React stack nav
 ==========
-Dead-simple composable universal navigation for React Native and React.
+Simple universal navigation for React Native _and_ React
 
-- Works universally in iOS, Android, and Web
-- Composable, declarative routes
-- Simple, familiar `pushState` API
-- Automatic support for Android back button and URLs on web
-- Server-side rending
-- Small footprint (you can read the source!)
+- **Universal** Works in iOS, Android, and Web
+- **Simple, familiar API** Has the same API as the web's [History API](https://developer.mozilla.org/en-US/docs/Web/API/History_API)
+- **Composable and declarative** Uses React's component tree to compose and handle routes
+- **Supports back/forward buttons** Automatic support for Android back button and back/forward buttons on web
+- **Server-side rendering** Simple as pre-loading redux state with the requested url
+- **Easy to understand** You can read the source! Only ~200 lines of code
 
-## Example
+## What it looks like
 
-*createStore.js*
+A navigation component (drawer, tabs, anything):
+```js
+import React from 'react'
+import { Button, View } from 'react-native'
+import { connect } from 'react-redux'
+import { pushState } from 'react-stack-nav'
+
+const Navigation = ({ pushState }) =>
+  <View>
+    <Button onPress={() => pushState(0, 0, '')}>Go to home</Button>
+    <Button onPress={() => pushState(0, 0, '/myRoute')}>Go to My Route</Button>
+  </View>
+
+const mapDispatchToProps = { pushState }
+
+export default connect(null, mapDispatchToProps)(Navigation)
+```
+
+A component receives and handles the first fragment of the url:
+```js
+import React from 'react'
+import { Text, View } from 'react-native'
+import { createOrchestrator } from 'react-stack-nav'
+
+const Index = ({ routeFragment }) =>
+  <View>
+    {routeFragment === '' && <Text>Home</Text>}
+    {routeFragment === 'myRoute' && <Text>My route</Text>}
+  </View>
+
+export default createOrchestrator(Index)
+```
+
+## Installation
+
+```
+npm -S i tuckerconnelly/react-stack-nav
+```
+
+Then match your redux setup to this:
+
 ```js
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux'
 import thunk from 'redux-thunk'
@@ -33,82 +73,16 @@ export default (initialState = {}) =>
   )
 ```
 
-*index.ios.js*
-```js
-import React, { Component } from 'react'
-import { AppRegistry, Button, View } from 'react-native'
-
-import createStore from './redux'
-import Index from './Index'
-
-const store = createStore()
-
-class App extends Component {
-  render() {
-    return (
-      <Provider store={store}>
-        <View>
-          <Navigation />
-          <Index />
-        </View>
-      </Provider>
-    )
-  }
-}
-
-AppRegistry.registerComponent('Example', () => App)
-```
-
-*Navigation.js*
-```js
-import React from 'react'
-import { Button, View } from 'react-native'
-import { pushState } from 'react-stack-nav'
-
-const Navigation = ({ pushState }) =>
-  <View>
-    <Button onPress={() => pushState(0, 0, '')}>Go to home</Button>
-    <Button onPress={() => pushState(0, 0, '/myRoute')}>Go to My Route</Button>
-  </View>
-
-const mapDispatchToProps = { pushState }
-
-export default connect(null, mapDispatchToProps)(Navigation)
-```
-
-*Index.js*
-```js
-import React from 'react'
-import { Text, View } from 'react-native'
-import { createOrchestrator } from 'react-stack-nav'
-
-const Index = ({ routeFragment }) =>
-  <View>
-    {routeFragment === '/' && <Text>Home</Text>}
-    {routeFragment === '/myRoute' && <Text>My route</Text>}
-  </View>
-
-export default createOrchestrator(Index)
-```
-
-## Installation
-
-```
-npm -S i tuckerconnelly/react-stack-nav
-```
-
-Also, if you want urls to work on the web, or the back button to work on Android, make sure your createStore function looks like the one above ^
-
 ## Usage
 
-react-stack-nav follows a few principles that make it so simple and portable
-- Depend on redux, and treat the redux store as a single-source-of-truth for routing
-- Use URLs and the pushState API, even in React Native
+react-stack-nav follows a few principles that make it simple and portable
+- Treat the redux store as a single-source-of-truth for routing
+- Use URLs and the History API, even in React Native
 - Treat the URL as a stack, and "pop" off fragments of the URL to orchestrate transitions between URLs
 
 ---
 
-At the core of react-stack-nav is the `navigation` reducer, whose state like this:
+At the core of react-stack-nav is the `navigation` reducer, whose state looks like this:
 
 ```js
 {
@@ -122,12 +96,12 @@ If you want to navigate to a new url/page, use the `pushState` action creator in
 ```js
 import { pushState } from 'react-stack-nav'
 
-...
-
-    _handleClick = () => this.props.pushState({ yo: 'dawg' }, 'New Route', '/newRoute')
+class MyComponent {
+  _handleClick = () => this.props.pushState({ yo: 'dawg' }, 'New Route', '/newRoute')
+}
 ```
 
-That'll push a new object onto navigation.history, so your new navigation reducer state might look like this:
+That'll push a new object onto `state.navigation.history`, so your new navigation reducer state might look like this:
 
 ```js
 {
@@ -148,11 +122,11 @@ Now say you clicked back in the browser (or hit the android back button), your s
 }
 ```
 
-With `index: 0` to say, hey, we're on the first history object.
+With `index: 0` to say, hey, we're on the first history entry.
 
 ---
 
-NOW, if you want to use the history object, to ya know, render stuff, you can do so directly:
+If you want to use the history object, to ya know, render stuff, you can do so directly:
 
 ```js
 
@@ -176,21 +150,21 @@ You could handle all your routing like that, but...wait a minute...if you turn a
 ```
 /users/1/profile
 
-users
------
-1
------
+ users
+-------
+   1
+-------
 profile
 ```
 
-`react-stack-nav` has the idea of an _orchestrator_, which pops off each element in the stack and handles transitions when that element in the stack changes.
+`react-stack-nav` runs with this idea and introduces the idea of an _orchestrator_. Orchestrators pops off an element in the stack and declaratively handles transitions when it changes:
 
 ```
-users   -------> Popped off and handled by first orchestrator in component tree
------
-1       -------> Popped off and handled by second orchestrator in component tree
------
-profile -------> Popped off and handled by third orchestrator in component tree
+ users     -------> Popped off and handled by first orchestrator in component tree
+-------
+   1       -------> Popped off and handled by second orchestrator in component tree
+-------
+profile    -------> Popped off and handled by third orchestrator in component tree
 ```
 
 The first orchestrator found in the component tree would handle changes to the top of the stack:
@@ -259,7 +233,7 @@ const ProfileIndex = ({ routeFragment }) => {
 
 #### Action creators
 
-Trying to match these as close as possible to the [History API](https://developer.mozilla.org/en-US/docs/Web/API/History_API) :
+These are the same as the [History API](https://developer.mozilla.org/en-US/docs/Web/API/History_API) :
 
 - `pushState(stateObj: object, title: string, url: string)`: Pushes a new state onto the history array
 - `replaceState(stateObj: object, title: string, url: string)`: Replaces the current state on the history array
