@@ -3,8 +3,7 @@ import invariant from 'invariant'
 
 function makeStackFromPathname(pathname) {
   const pathArray = pathname.split('/')
-  pathArray.shift() // Remove first blank ""
-  if (pathArray[pathArray.length - 1]) pathArray.pop() // Remove trailing "/"
+  if (pathArray.length > 1) pathArray.shift() // Remove first blank ""
   return pathArray
 }
 

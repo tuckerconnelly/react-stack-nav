@@ -11,9 +11,10 @@ export default function attachHistoryModifiers({ BackAndroid }) {
     if (__WEB__) {
       window.onpopstate = ({ state }) => {
         const newIndex = getState().navigation.history
-          .map(s => s.index)
+          .map(s => s.stateObj.index)
           .indexOf(state.index)
         const lastIndex = getState().navigation.index
+
         if (newIndex <= lastIndex) dispatch(back(true))
         if (newIndex > lastIndex) dispatch(forward(true))
       }

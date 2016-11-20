@@ -1,13 +1,19 @@
 // HACK global.__BUNDLE_START_TIME__ is only present in React Native
 const __WEB__ = !global.__BUNDLE_START_TIME__ && window.location.pathname
 
+const removeTrailingSlashFromUrl = url => {
+  const urlParts = url.split('?')
+  urlParts[0] = urlParts[0].replace(/\/$/, '')
+  return urlParts.join('?')
+}
+
 export const pushState = (stateObj, title, url) => ({
   type: 'HISTORY_PUSH_STATE',
-  payload: { stateObj: stateObj || {}, title, url },
+  payload: { stateObj: stateObj || {}, title: title || '', url: removeTrailingSlashFromUrl(url) },
 })
 export const replaceState = (stateObj, title, url) => ({
   type: 'HISTORY_REPLACE_STATE',
-  payload: { stateObj: stateObj || {}, title, url },
+  payload: { stateObj: stateObj || {}, title: title || '', url: removeTrailingSlashFromUrl(url) },
 })
 export const back = reduxOnly => ({
   type: 'HISTORY_BACK',
@@ -20,11 +26,11 @@ export const forward = reduxOnly => ({
 
 const initialState = {
   index: 0,
-  history: [{ stateObj: { index: 0 }, title: null, url: '/' }],
+  history: [{ stateObj: { index: 0 }, title: '', url: '' }],
 }
 
 if (__WEB__) {
-  initialState.history[0].url = location.pathname
+  initialState.history[0].url = removeTrailingSlashFromUrl(location.pathname)
   history.replaceState(
     initialState.history[0].stateObj,
     initialState.history[0].title,
@@ -37,11 +43,11 @@ export default (state = initialState, action) => {
     case 'HISTORY_PUSH_STATE': {
       const { stateObj, title, url } = action.payload
 
-      if (url === state.history[state.history.length - 1].url) return state
+      if (url === state.history[state.index].url) return state
 
       const stateObjWithIndex = { ...stateObj, index: state.index + 1 }
 
-      if (__WEB__) history.pushState(stateObjWithIndex, title, url)
+      if (__WEB__) history.pushState(stateObjWithIndex, title, url.length ? url : '/')
       return {
         index: state.index + 1,
         history: state.history
@@ -52,11 +58,11 @@ export default (state = initialState, action) => {
     case 'HISTORY_REPLACE_STATE': {
       const { stateObj, title, url } = action.payload
 
-      if (url === state.history[state.history.length - 1].url) return state
+      if (url === state.history[state.index].url) return state
 
       const stateObjWithIndex = { ...stateObj, index: state.index }
 
-      if (__WEB__) history.replaceState(stateObj, title, url)
+      if (__WEB__) history.replaceState(stateObj, title, url.length ? url : '/')
       return {
         index: state.index,
         history: state.history
