@@ -3,11 +3,11 @@ import invariant from 'invariant'
 
 function makeStackFromPathname(pathname) {
   const pathArray = pathname.split('/')
-  if (pathArray.length > 1) pathArray.shift() // Remove first blank ""
+  pathArray.shift() // Remove first blank ""
   return pathArray
 }
 
-export default component => {
+export default fragment => component => {
   let ComposedComponent = component
 
   // Handle stateless components
@@ -19,7 +19,7 @@ export default component => {
     }
   }
 
-  class Route extends Component { // eslint-disable-line react/no-multi-comp
+  class Orchestrator extends Component { // eslint-disable-line react/no-multi-comp
     constructor(props, context) {
       super(props, context)
       invariant(context.store,
@@ -32,53 +32,87 @@ export default component => {
         'Make sure you have react-stack-nav\'s reducer on ' +
         'your root reducer.'
       )
-
-      this.updateFromStore()
     }
+
+    state = { urlStack: [] }
 
     getChildContext() {
-      return { navigationStack: this.navigationStack.slice(1, this.navigationStack.length) }
+      return {
+        lastOrchestratorId: this._orchestratorId,
+        orchestratorPath: this._orchestratorPath,
+      }
     }
 
-    componentDidMount() {
-      // Reset navigation stack when store changes
-      this.context.store.subscribe(() => this.updateFromStore(true))
+    componentWillMount() {
+      const { lastOrchestratorId } = this.context
+
+      this._orchestratorId = lastOrchestratorId !== undefined ?
+        lastOrchestratorId + 1 :
+        0
+      this._orchestratorPath = this.context.orchestratorPath ?
+        [...this.context.orchestratorPath, fragment] :
+        []
+
+      this._updateUrlStack()
+      this._unsubscribeFromStore = this.context.store.subscribe(this._updateUrlStack)
     }
 
-    updateFromStore(forceUpdate) {
+    componentWillUnmount() {
+      this._unsubscribeFromStore()
+    }
+
+    _unsubscribeFromStore = null
+
+    _updateUrlStack = () => {
       const state = this.context.store.getState()
-      this.index = state.navigation.index
+      const index = state.navigation.index
       // Default to redux store for stack if this is the first
       // route and the navStack hasn't been set yet
-      this.navigationStack =
-        this.context.navigationStack ||
-        makeStackFromPathname(state.navigation.history[this.index].url)
+      this.setState({
+        urlStack: makeStackFromPathname(state.navigation.history[index].url),
+      })
+    }
 
-      forceUpdate && this.forceUpdate()
+    get _routeFragment() {
+      const urlMatchesOrchestratorPath = this._orchestratorPath.reduce((prev, curr, i) => {
+        if (!prev) return false
+        // Handle regex orchestrators
+        if (this._orchestratorPath[i] instanceof RegExp) {
+          return this.state.urlStack[i].match(this._orchestratorPath[i])
+        }
+        // Handle string orchestrators
+        return this.state.urlStack[i] === this._orchestratorPath[i]
+      }, true)
+
+      if (!urlMatchesOrchestratorPath) return undefined
+
+      return this.state.urlStack[this._orchestratorId] || ''
     }
 
     render() {
       return (
         <ComposedComponent
           {...this.props}
-          routeFragment={this.navigationStack[0]} />
+          routeFragment={this._routeFragment} />
       )
     }
   }
 
-  Route.displayName =
+  Orchestrator.displayName =
     `Orchestrator(${Component.displayName || Component.name || 'Component'})`
 
-  Route.contextTypes = {
-    ...Route.contextTypes,
+  Orchestrator.contextTypes = {
+    ...Orchestrator.contextTypes,
     store: PropTypes.object,
-    navigationStack: PropTypes.array,
+    lastOrchestratorId: PropTypes.number,
+    orchestratorPath: PropTypes.array,
   }
 
-  Route.childContextTypes = {
-    ...Route.childContextTypes,
-    navigationStack: PropTypes.array,
+  Orchestrator.childContextTypes = {
+    ...Orchestrator.childContextTypes,
+    lastOrchestratorId: PropTypes.number,
+    orchestratorPath: PropTypes.array,
   }
 
-  return Route
+  return Orchestrator
 }

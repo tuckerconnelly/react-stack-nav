@@ -79,6 +79,7 @@ react-stack-nav follows a few principles that make it simple and portable
 - Treat the redux store as a single-source-of-truth for routing
 - Use URLs and the History API, even in React Native
 - Treat the URL as a stack, and "pop" off fragments of the URL to orchestrate transitions between URLs
+- Leave you in control, favor patterns over frameworks
 
 ---
 
@@ -180,7 +181,7 @@ const Index = ({ routeFragment }) => {
   </View>
 }
 
-export default createOrchestrator(Index)
+export default createOrchestrator()(Index)
 ```
 
 The next orchestrators found in the tree would handle the next layer of the url stack, so `UsersIndex` might look like this:
@@ -201,8 +202,10 @@ class UsersIndex extends Component {
   }
 }
 
-export default createOrchestrator(UsersIndex)
+export default createOrchestrator('users')(UsersIndex)
 ```
+
+`createOrchestrator()` accepts a string or a regular expression for that particular layer of that stack. If it doesn't match the current layer of the url, `props.routeFragment` will be undefined.
 
 You could create orchestrators _ad inifitum_ all the way down the component tree to handle as much of the URL stack as you want:
 
@@ -214,6 +217,10 @@ const UserIndex = ({ routeFragment }) => {
   </View>
 }
 
+export default createOrchestrator(/\d+/)(UserIndex)
+```
+
+```js
 const ProfileIndex = ({ routeFragment }) => {
   <View>
     {/* Would handle /users/${userId}/profile/posts */}
@@ -223,12 +230,14 @@ const ProfileIndex = ({ routeFragment }) => {
   </View>
 }
 
+export default createOrchestrator('profile')(ProfileIndex)
+
 ```
 
 ## API
 
 - `attachHistoryModifiers` - Store enhancer for redux, handles android back-button presses, and browser back/forward buttons
-- `createOrchestrator` -- Higher-order-component that creates an orchestrator
+- `createOrchestrator(fragment: string | regexp)` -- Higher-order-component that creates an orchestrator
 - `navigation` -- `navigation` reducer for setting up your store
 
 #### Action creators
