@@ -23,10 +23,13 @@ export const forward = reduxOnly => ({
   type: 'HISTORY_FORWARD',
   payload: { reduxOnly },
 })
-
 export const go = numberOfEntries => ({
   type: 'HISTORY_GO',
   payload: { numberOfEntries },
+})
+export const indexRedirect = (stateObj, title, url) => ({
+  type: 'HISTORY_INDEX_REDIRECT',
+  payload: { stateObj: stateObj || {}, title: title || '', url: removeTrailingSlashFromUrl(url) },
 })
 
 const initialState = {
@@ -73,6 +76,21 @@ export default (state = initialState, action) => {
         history: state.history
           .slice(0, state.index)
           .concat([{ stateObj: stateObjWithIndex, title, url }]),
+      }
+    }
+    case 'HISTORY_INDEX_REDIRECT': {
+      const { stateObj, title, url } = action.payload
+
+      const stateObjWithIndex = { ...stateObj, index: state.index }
+
+      const newUrl = state.history[state.index].url + '/' + url
+
+      if (__WEB__) history.replaceState(stateObj, title, newUrl)
+      return {
+        index: state.index,
+        history: state.history
+          .slice(0, state.index)
+          .concat([{ stateObj: stateObjWithIndex, title, url: newUrl }]),
       }
     }
     case 'HISTORY_BACK':

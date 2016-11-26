@@ -7,7 +7,7 @@ Simple universal navigation for React Native _and_ React
 - **Composable and declarative** Uses React's component tree to compose and handle routes
 - **Supports back/forward buttons** Automatic support for Android back button and back/forward buttons on web
 - **Server-side rendering** Simple as pre-loading redux state with the requested url
-- **Easy to understand** You can read the source! Only ~200 lines of code
+- **Easy to understand** You can read the source! Only ~300 lines of code
 
 ## What it looks like
 
@@ -249,6 +249,7 @@ These are the same as the [History API](https://developer.mozilla.org/en-US/docs
 - `back(reduxOnly: bool)`: Moves the `navigation.index` back one. If `reduxOnly` is true, it won't change the browser `history` state (this is mostly for internal use)
 - `forward(reduxOnly: bool)`: Moves the `navigation.index` forward one, reduxOnly is the same as for `back()`
 - `go(numberOfEntries: int)`: Moves the `navigation.index` forward/backward by the passed number (`go(1)` is the same as `forward()`, for example).
+- `indexRedirect(stateObj: object, title: string, toUrl: string)`: Like `replaceState`, but appends the `toUrl` to the current url
 
 ## License
 MIT
