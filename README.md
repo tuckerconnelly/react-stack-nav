@@ -3,11 +3,11 @@ React stack nav
 Simple universal navigation for React Native and React
 
 - **Universal** Works in iOS, Android, and Web
-- **Simple, familiar API** Has the same API as the web's [History API](https://developer.mozilla.org/en-US/docs/Web/API/History_API)
-- **Composable and declarative** Uses React's component tree to compose and handle routes
+- **Familiar API** Has the same API as the web's [History API](https://developer.mozilla.org/en-US/docs/Web/API/History_API)
 - **Back/forward button support** Automatic support for Android back button and back/forward buttons on web
 - **Deep linking support** Automatic support for deep linking
 - **Server-side rendering** Simple as pre-loading redux state with the requested url
+- **Composable and declarative** Uses React's component tree to compose and handle routes
 - **Easy to understand** You can read the source! Only ~300 lines of code
 
 ## What it looks like
@@ -76,15 +76,14 @@ export default (initialState = {}) =>
 
 If you want deep linking to work, make sure you set it up per instructions [here](https://facebook.github.io/react-native/docs/linking.html).
 
-## Usage
+## Principles
 
-react-stack-nav follows a few principles that make it simple and portable
 - Treat the redux store as a single-source-of-truth for routing
 - Use URLs and the History API, even in React Native
 - Treat the URL as a stack, and "pop" off fragments of the URL to orchestrate transitions between URLs
 - Leave you in control, favor patterns over frameworks
 
----
+## Usage
 
 At the core of react-stack-nav is the `navigation` reducer, whose state looks like this:
 
