@@ -6,6 +6,7 @@ Simple universal navigation for React Native _and_ React
 - **Simple, familiar API** Has the same API as the web's [History API](https://developer.mozilla.org/en-US/docs/Web/API/History_API)
 - **Composable and declarative** Uses React's component tree to compose and handle routes
 - **Supports back/forward buttons** Automatic support for Android back button and back/forward buttons on web
+- **Supports deep linking** Automatic support for deep linking
 - **Server-side rendering** Simple as pre-loading redux state with the requested url
 - **Easy to understand** You can read the source! Only ~300 lines of code
 
@@ -56,7 +57,7 @@ Then match your redux setup to this:
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux'
 import thunk from 'redux-thunk'
 import { navigation, attachHistoryModifiers } from 'react-stack-nav'
-import { BackAndroid } from 'react-native'
+import { BackAndroid, Linking } from 'react-native'
 
 import app from './modules/duck'
 
@@ -68,10 +69,12 @@ export default (initialState = {}) =>
     initialState,
     compose(
       applyMiddleware(thunk),
-      attachHistoryModifiers({ BackAndroid }),
+      attachHistoryModifiers({ BackAndroid, Linking }),
     ),
   )
 ```
+
+If you want deep linking to work, make sure you set it up per instructions [here](https://facebook.github.io/react-native/docs/linking.html).
 
 ## Usage
 

@@ -1,9 +1,11 @@
+import URL from 'url-parse'
+
 // HACK global.__BUNDLE_START_TIME__ is only present in React Native
 const __WEB__ = !global.__BUNDLE_START_TIME__ && window.location.pathname
 
-import { back, forward } from './navigation'
+import { replaceState, back, forward } from './navigation'
 
-export default function attachHistoryModifiers({ BackAndroid }) {
+export default function attachHistoryModifiers({ BackAndroid, Linking }) {
   return createStore => (reducer, preloadedState, enhancer) => {
     const store = createStore(reducer, preloadedState, enhancer)
     const { dispatch, getState } = store
@@ -25,6 +27,12 @@ export default function attachHistoryModifiers({ BackAndroid }) {
         if (index === 0) return false
         dispatch(back())
         return true
+      })
+    }
+    if (Linking) {
+      Linking.addEventListener('url', ({ url }) => {
+        const { pathname, query, hash } = new URL(url)
+        dispatch(replaceState(0, 0, `${pathname}${query}${hash}`))
       })
     }
 
