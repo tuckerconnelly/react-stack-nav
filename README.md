@@ -42,7 +42,7 @@ const Index = ({ routeFragment }) =>
     {routeFragment === 'myRoute' && <Text>My route</Text>}
   </View>
 
-export default createOrchestrator(Index)
+export default createOrchestrator()(Index)
 ```
 
 ## Installation
@@ -239,7 +239,7 @@ export default createOrchestrator('profile')(ProfileIndex)
 
 ## API
 
-- `attachHistoryModifiers` - Store enhancer for redux, handles android back-button presses, and browser back/forward buttons
+- `attachHistoryModifiers` - Store enhancer for redux, handles android back-button presses, browser back/forward buttons, and deep linking
 - `createOrchestrator(fragment: string | regexp)` -- Higher-order-component that creates an orchestrator
 - `navigation` -- `navigation` reducer for setting up your store
 
