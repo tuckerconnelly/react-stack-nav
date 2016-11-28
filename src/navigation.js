@@ -38,8 +38,8 @@ const initialState = {
 }
 
 if (__WEB__) {
-  initialState.history[0].url = removeTrailingSlashFromUrl(location.pathname)
-  history.replaceState(
+  initialState.history[0].url = removeTrailingSlashFromUrl(window.location.pathname)
+  window.history.replaceState(
     initialState.history[0].stateObj,
     initialState.history[0].title,
     initialState.history[0].url
@@ -55,7 +55,7 @@ export default (state = initialState, action) => {
 
       const stateObjWithIndex = { ...stateObj, index: state.index + 1 }
 
-      if (__WEB__) history.pushState(stateObjWithIndex, title, url.length ? url : '/')
+      if (__WEB__) window.history.pushState(stateObjWithIndex, title, url.length ? url : '/')
       return {
         index: state.index + 1,
         history: state.history
@@ -70,7 +70,7 @@ export default (state = initialState, action) => {
 
       const stateObjWithIndex = { ...stateObj, index: state.index }
 
-      if (__WEB__) history.replaceState(stateObj, title, url.length ? url : '/')
+      if (__WEB__) window.history.replaceState(stateObj, title, url.length ? url : '/')
       return {
         index: state.index,
         history: state.history
@@ -85,7 +85,7 @@ export default (state = initialState, action) => {
 
       const newUrl = state.history[state.index].url + '/' + url
 
-      if (__WEB__) history.replaceState(stateObj, title, newUrl)
+      if (__WEB__) window.history.replaceState(stateObj, title, newUrl)
       return {
         index: state.index,
         history: state.history
@@ -96,13 +96,13 @@ export default (state = initialState, action) => {
     case 'HISTORY_BACK':
       if (state.index === 0) return state
 
-      if (__WEB__ && !action.payload.reduxOnly) history.back()
+      if (__WEB__ && !action.payload.reduxOnly) window.history.back()
       return { ...state, index: state.index - 1 }
 
     case 'HISTORY_FORWARD':
       if (state.index === state.history.length - 1) return state
 
-      if (__WEB__ && !action.payload.reduxOnly) history.forward()
+      if (__WEB__ && !action.payload.reduxOnly) window.history.forward()
       return { ...state, index: state.index + 1 }
 
     case 'HISTORY_GO': {
