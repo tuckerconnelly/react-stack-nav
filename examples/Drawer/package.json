@@ -1,0 +1,28 @@
+{
+  "name": "Drawer",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "start:web": "webpack-dev-server"
+  },
+  "dependencies": {
+    "carbon-ui": "github:tuckerconnelly/carbon-ui",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "react-native": "^0.37.0",
+    "react-native-universal": "0.0.2",
+    "react-native-web": "github:tuckerconnelly/react-native-web",
+    "react-redux": "^4.4.6",
+    "react-stack-nav": "github:tuckerconnelly/react-stack-nav",
+    "redux": "^3.6.0",
+    "redux-thunk": "^2.1.0"
+  },
+  "devDependencies": {
+    "babel-loader": "^6.2.8",
+    "babel-preset-react-native": "1.9.0",
+    "html-webpack-plugin": "^2.24.1",
+    "webpack": "^1.13.3",
+    "webpack-dev-server": "^1.16.2"
+  }
+}

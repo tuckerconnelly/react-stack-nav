@@ -10,6 +10,13 @@ Simple universal navigation for React Native and React
 - **Composable and declarative** Uses React's component tree to compose and handle routes
 - **Easy to understand** You can read the source! Only ~300 lines of code
 
+## Examples
+
+iOS | Android | Web
+:---:|:---:|:---:
+| **[Drawer example](https://github.com/tuckerconnelly/react-stack-nav/tree/master/examples/Drawer)** |
+![iOS Drawer Example](https://cloud.githubusercontent.com/assets/4349082/20870986/9dd28bc6-ba5e-11e6-9dfb-0f22e334f95e.gif)  |  ![Android Drawer example](https://cloud.githubusercontent.com/assets/4349082/20870990/a194c5ee-ba5e-11e6-923b-7a82d0d1e3d3.gif)  |  ![web Drawer example](https://cloud.githubusercontent.com/assets/4349082/20870981/9a86f06a-ba5e-11e6-8762-6220955ce10a.gif)
+
 ## What it looks like
 
 A navigation component (drawer, tabs, anything):
