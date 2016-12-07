@@ -258,7 +258,8 @@ These are the same as the [History API](https://developer.mozilla.org/en-US/docs
 - `back(reduxOnly: bool)`: Moves the `navigation.index` back one. If `reduxOnly` is true, it won't change the browser `history` state (this is mostly for internal use)
 - `forward(reduxOnly: bool)`: Moves the `navigation.index` forward one, reduxOnly is the same as for `back()`
 - `go(numberOfEntries: int)`: Moves the `navigation.index` forward/backward by the passed number (`go(1)` is the same as `forward()`, for example).
-- `indexRedirect(stateObj: object, title: string, toUrl: string)`: Like `replaceState`, but appends the `toUrl` to the current url
+- `replaceTop(stateObj: object, title: string, toUrl: string)`: Like `replaceState`, but appends the `toUrl` to the current url instead of replacing it outright. Primarily used for index redirects.
+- `pushTop(stateObj: object, title: string, toUrl: string)`: Like `pushState`, but appends the `toUrl` to the current url instead of replacing it outright. Primarily used for card stacks.
 
 ## License
 MIT

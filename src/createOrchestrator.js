@@ -76,6 +76,8 @@ export default fragment => component => {
     get _routeFragment() {
       const urlMatchesOrchestratorPath = this._orchestratorPath.reduce((prev, curr, i) => {
         if (!prev) return false
+
+        if (!this.state.urlStack[i]) return false
         // Handle regex orchestrators
         if (this._orchestratorPath[i] instanceof RegExp) {
           return this.state.urlStack[i].match(this._orchestratorPath[i])

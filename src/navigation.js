@@ -27,8 +27,12 @@ export const go = numberOfEntries => ({
   type: 'HISTORY_GO',
   payload: { numberOfEntries },
 })
-export const indexRedirect = (stateObj, title, url) => ({
-  type: 'HISTORY_INDEX_REDIRECT',
+export const replaceTop = (stateObj, title, url) => ({
+  type: 'HISTORY_REPLACE_TOP',
+  payload: { stateObj: stateObj || {}, title: title || '', url: removeTrailingSlashFromUrl(url) },
+})
+export const pushTop = (stateObj, title, url) => ({
+  type: 'HISTORY_PUSH_TOP',
   payload: { stateObj: stateObj || {}, title: title || '', url: removeTrailingSlashFromUrl(url) },
 })
 
@@ -78,7 +82,7 @@ export default (state = initialState, action) => {
           .concat([{ stateObj: stateObjWithIndex, title, url }]),
       }
     }
-    case 'HISTORY_INDEX_REDIRECT': {
+    case 'HISTORY_REPLACE_TOP': {
       const { stateObj, title, url } = action.payload
 
       const stateObjWithIndex = { ...stateObj, index: state.index }
@@ -90,6 +94,21 @@ export default (state = initialState, action) => {
         index: state.index,
         history: state.history
           .slice(0, state.index)
+          .concat([{ stateObj: stateObjWithIndex, title, url: newUrl }]),
+      }
+    }
+    case 'HISTORY_PUSH_TOP': {
+      const { stateObj, title, url } = action.payload
+
+      const stateObjWithIndex = { ...stateObj, index: state.index }
+
+      const newUrl = state.history[state.index].url + '/' + url
+
+      if (__WEB__) window.history.pushState(stateObj, title, newUrl)
+      return {
+        index: state.index + 1,
+        history: state.history
+          .slice(0, state.index + 1)
           .concat([{ stateObj: stateObjWithIndex, title, url: newUrl }]),
       }
     }
