@@ -8,14 +8,21 @@ Simple universal navigation for React Native and React
 - **Deep linking support** Automatic support for deep linking
 - **Server-side rendering** Simple as pre-loading redux state with the requested url
 - **Composable and declarative** Uses React's component tree to compose and handle routes
+- **Use any navigation paradigm** Abstract enough to let you build the navigation with any UI components you want
 - **Easy to understand** You can read the source! Only ~300 lines of code
 
 ## Examples
 
 iOS | Android | Web
 :---:|:---:|:---:
-| **[Drawer example](https://github.com/tuckerconnelly/react-stack-nav/tree/master/examples/Drawer)** |
-![iOS Drawer Example](https://cloud.githubusercontent.com/assets/4349082/20870986/9dd28bc6-ba5e-11e6-9dfb-0f22e334f95e.gif)  |  ![Android Drawer example](https://cloud.githubusercontent.com/assets/4349082/20870990/a194c5ee-ba5e-11e6-923b-7a82d0d1e3d3.gif)  |  ![web Drawer example](https://cloud.githubusercontent.com/assets/4349082/20870981/9a86f06a-ba5e-11e6-8762-6220955ce10a.gif)
+| **[Drawer example](https://github.com/tuckerconnelly/react-stack-nav-examples/tree/master/Drawer)** |
+![iOS drawer Example](https://cloud.githubusercontent.com/assets/4349082/20870986/9dd28bc6-ba5e-11e6-9dfb-0f22e334f95e.gif)  |  ![Android drawer example](https://cloud.githubusercontent.com/assets/4349082/20870990/a194c5ee-ba5e-11e6-923b-7a82d0d1e3d3.gif)  |  ![web drawer example](https://cloud.githubusercontent.com/assets/4349082/20870981/9a86f06a-ba5e-11e6-8762-6220955ce10a.gif)
+| **[Bottom nav with stacks example](https://github.com/tuckerconnelly/react-stack-nav-examples/tree/master/BottomNavWithStacks)** |
+![iOS bottom nav Example](https://cloud.githubusercontent.com/assets/4349082/20981756/dc85dac2-bc83-11e6-85d6-b2733e16b8dd.gif)  |  ![Android Bottom nav example](https://cloud.githubusercontent.com/assets/4349082/20982072/0a2000ce-bc85-11e6-9b6a-9cd56f3d2bb6.gif)  |  ![web bottom nav example](https://cloud.githubusercontent.com/assets/4349082/20981759/e114fc76-bc83-11e6-8165-85202f231fbf.gif)
+
+The examples repo is [over here](https://github.com/tuckerconnelly/react-stack-nav-examples).
+
+You can also check out a real-world example in the [Carbon UI Docs source](https://github.com/tuckerconnelly/carbon-ui-docs).
 
 ## What it looks like
 
