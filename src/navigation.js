@@ -74,7 +74,7 @@ export default (state = initialState, action) => {
 
       const stateObjWithIndex = { ...stateObj, index: state.index }
 
-      if (__WEB__) window.history.replaceState(stateObj, title, url.length ? url : '/')
+      if (__WEB__) window.history.replaceState(stateObjWithIndex, title, url.length ? url : '/')
       return {
         index: state.index,
         history: state.history
@@ -89,7 +89,7 @@ export default (state = initialState, action) => {
 
       const newUrl = state.history[state.index].url + '/' + url
 
-      if (__WEB__) window.history.replaceState(stateObj, title, newUrl)
+      if (__WEB__) window.history.replaceState(stateObjWithIndex, title, newUrl)
       return {
         index: state.index,
         history: state.history
@@ -100,11 +100,11 @@ export default (state = initialState, action) => {
     case 'HISTORY_PUSH_TOP': {
       const { stateObj, title, url } = action.payload
 
-      const stateObjWithIndex = { ...stateObj, index: state.index }
+      const stateObjWithIndex = { ...stateObj, index: state.index + 1 }
 
       const newUrl = state.history[state.index].url + '/' + url
 
-      if (__WEB__) window.history.pushState(stateObj, title, newUrl)
+      if (__WEB__) window.history.pushState(stateObjWithIndex, title, newUrl)
       return {
         index: state.index + 1,
         history: state.history
@@ -115,13 +115,19 @@ export default (state = initialState, action) => {
     case 'HISTORY_BACK':
       if (state.index === 0) return state
 
-      if (__WEB__ && !action.payload.reduxOnly) window.history.back()
+      if (__WEB__ && !action.payload.reduxOnly) {
+        window.history.back()
+        return state // Redux change handled by attachHistoryModifiers()
+      }
       return { ...state, index: state.index - 1 }
 
     case 'HISTORY_FORWARD':
       if (state.index === state.history.length - 1) return state
 
-      if (__WEB__ && !action.payload.reduxOnly) window.history.forward()
+      if (__WEB__ && !action.payload.reduxOnly) {
+        window.history.forward()
+        return state // Redux change handled by attachHistoryModifiers()
+      }
       return { ...state, index: state.index + 1 }
 
     case 'HISTORY_GO': {
