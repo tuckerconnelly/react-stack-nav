@@ -11,7 +11,7 @@ Simple universal navigation for React Native and React
 - **Use any navigation paradigm** Abstract enough to let you build the navigation with any UI components you want
 - **Easy to understand** You can read the source! Only ~300 lines of code
 
-## Examples
+### Examples
 
 iOS | Android | Web
 :---:|:---:|:---:
@@ -24,7 +24,7 @@ The examples repo is [over here](https://github.com/tuckerconnelly/react-stack-n
 
 You can also check out a real-world example in the [Carbon UI Docs source](https://github.com/tuckerconnelly/carbon-ui-docs).
 
-## What it looks like
+### What it looks like
 
 A navigation component (drawer, tabs, anything):
 ```js
@@ -59,7 +59,7 @@ const Index = ({ routeFragment }) =>
 export default createOrchestrator()(Index)
 ```
 
-## Installation
+### Installation
 
 ```
 npm -S i tuckerconnelly/react-stack-nav
@@ -90,14 +90,14 @@ export default (initialState = {}) =>
 
 If you want deep linking to work, make sure you set it up per instructions [here](https://facebook.github.io/react-native/docs/linking.html).
 
-## Principles
+### Principles
 
 - Treat the redux store as a single-source-of-truth for routing
 - Use URLs and the History API, even in React Native
 - Treat the URL as a stack, and "pop" off fragments of the URL to orchestrate transitions between URLs
 - Leave you in control, favor patterns over frameworks
 
-## Usage
+### Usage
 
 At the core of react-stack-nav is the `navigation` reducer, whose state looks like this:
 
@@ -250,7 +250,7 @@ export default createOrchestrator('profile')(ProfileIndex)
 
 ```
 
-## API
+### API
 
 - `attachHistoryModifiers` - Store enhancer for redux, handles android back-button presses, browser back/forward buttons, and deep linking
 - `createOrchestrator(fragment: string | regexp)` -- Higher-order-component that creates an orchestrator
@@ -268,5 +268,9 @@ These are the same as the [History API](https://developer.mozilla.org/en-US/docs
 - `replaceTop(stateObj: object, title: string, toUrl: string)`: Like `replaceState`, but appends the `toUrl` to the current url instead of replacing it outright. Primarily used for index redirects.
 - `pushTop(stateObj: object, title: string, toUrl: string)`: Like `pushState`, but appends the `toUrl` to the current url instead of replacing it outright. Primarily used for card stacks.
 
-## License
+### Connect
+
+Follow the creator on Twitter, [@TuckerConnelly](https://twitter.com/TuckerConnelly)
+
+### License
 MIT
