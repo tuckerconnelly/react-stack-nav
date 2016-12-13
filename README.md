@@ -62,7 +62,7 @@ export default createOrchestrator()(Index)
 ### Installation
 
 ```
-npm -S i tuckerconnelly/react-stack-nav
+npm -S i react-stack-nav
 ```
 
 Then match your redux setup to this:
