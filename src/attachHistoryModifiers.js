@@ -5,7 +5,7 @@ const __WEB__ = !global.__BUNDLE_START_TIME__ && window.location.pathname
 
 import { replaceState, back, forward } from './navigation'
 
-export default function attachHistoryModifiers({ BackAndroid, Linking }) {
+export default function attachHistoryModifiers({ BackAndroid, Linking } = {}) {
   return createStore => (reducer, preloadedState, enhancer) => {
     const store = createStore(reducer, preloadedState, enhancer)
     const { dispatch, getState } = store
