@@ -15,14 +15,20 @@ export const replaceState = (stateObj, title, url) => ({
   type: 'HISTORY_REPLACE_STATE',
   payload: { stateObj: stateObj || {}, title: title || '', url: removeTrailingSlashFromUrl(url) },
 })
-export const back = reduxOnly => ({
-  type: 'HISTORY_BACK',
-  payload: { reduxOnly },
-})
-export const forward = reduxOnly => ({
-  type: 'HISTORY_FORWARD',
-  payload: { reduxOnly },
-})
+export const back = fromPopState => {
+  if (__WEB__ && !fromPopState) {
+    window.history.back()
+    return { type: 'NULL' }
+  }
+  return { type: 'HISTORY_BACK' }
+}
+export const forward = fromPopState => {
+  if (__WEB__ && !fromPopState) {
+    window.history.forward()
+    return { type: 'NULL' }
+  }
+  return { type: 'HISTORY_FORWARD' }
+}
 export const go = numberOfEntries => ({
   type: 'HISTORY_GO',
   payload: { numberOfEntries },
@@ -114,20 +120,10 @@ export default (state = initialState, action) => {
     }
     case 'HISTORY_BACK':
       if (state.index === 0) return state
-
-      if (__WEB__ && !action.payload.reduxOnly) {
-        window.history.back()
-        return state // Redux change handled by attachHistoryModifiers()
-      }
       return { ...state, index: state.index - 1 }
 
     case 'HISTORY_FORWARD':
       if (state.index === state.history.length - 1) return state
-
-      if (__WEB__ && !action.payload.reduxOnly) {
-        window.history.forward()
-        return state // Redux change handled by attachHistoryModifiers()
-      }
       return { ...state, index: state.index + 1 }
 
     case 'HISTORY_GO': {
